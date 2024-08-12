@@ -4,34 +4,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import cm.calculator.calculatrice.entity.CalculatriceRequest;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class CalculatriceController {
 
     @PostMapping("/calculate")
     public ResponseEntity<Double> calculate(@RequestBody CalculatriceRequest request) {
+        List<Double> operands = request.operands();
         double result;
 
-        // Utilisation du pattern matching pour le switch
         result = switch (request.type()) {
-            case "addition" -> request.operand1() + request.operand2();
-            case "soustraction" -> request.operand1() - request.operand2();
-            case "multiplication" -> request.operand1() * request.operand2();
+            case "addition" -> operands.stream().mapToDouble(Double::doubleValue).sum();
+            case "soustraction" -> operands.stream().reduce((a, b) -> a - b).orElse(0.0);
+            case "multiplication" -> operands.stream().reduce(1.0, (a, b) -> a * b);
             case "division" -> {
-                if (request.operand2() == 0) {
+                if (operands.contains(0.0)) {
                     throw new IllegalArgumentException("Division par zéro non autorisée");
                 }
-                yield request.operand1() / request.operand2();
+                yield operands.stream().reduce((a, b) -> a / b).orElse(0.0);
             }
-            case "sin" -> Math.sin(Math.toRadians(request.operand1()));
-            case "cos" -> Math.cos(Math.toRadians(request.operand1()));
-            case "tan" -> Math.tan(Math.toRadians(request.operand1()));
-            case "exp" -> Math.exp(request.operand1());
+            case "sin" -> Math.sin(Math.toRadians(operands.get(0)));
+            case "cos" -> Math.cos(Math.toRadians(operands.get(0)));
+            case "tan" -> Math.tan(Math.toRadians(operands.get(0)));
+            case "exp" -> Math.exp(operands.get(0));
             case "log" -> {
-                if (request.operand1() <= 0) {
+                if (operands.get(0) <= 0) {
                     throw new IllegalArgumentException("Le logarithme n'est défini que pour des nombres strictement positifs");
                 }
-                yield Math.log(request.operand1());
+                yield Math.log(operands.get(0));
             }
             default -> throw new IllegalArgumentException("Type d'opération inconnu: " + request.type());
         };
