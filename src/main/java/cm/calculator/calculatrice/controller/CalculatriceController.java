@@ -13,27 +13,27 @@ public class CalculatriceController {
         double result;
 
         // Utilisation du pattern matching pour le switch
-        result = switch (request.getType()) {
-            case "addition" -> request.getOperand1() + request.getOperand2();
-            case "soustraction" -> request.getOperand1() - request.getOperand2();
-            case "multiplication" -> request.getOperand1() * request.getOperand2();
+        result = switch (request.type()) {
+            case "addition" -> request.operand1() + request.operand2();
+            case "soustraction" -> request.operand1() - request.operand2();
+            case "multiplication" -> request.operand1() * request.operand2();
             case "division" -> {
-                if (request.getOperand2() == 0) {
+                if (request.operand2() == 0) {
                     throw new IllegalArgumentException("Division par zéro non autorisée");
                 }
-                yield request.getOperand1() / request.getOperand2();
+                yield request.operand1() / request.operand2();
             }
-            case "sin" -> Math.sin(Math.toRadians(request.getOperand1()));
-            case "cos" -> Math.cos(Math.toRadians(request.getOperand1()));
-            case "tan" -> Math.tan(Math.toRadians(request.getOperand1()));
-            case "exp" -> Math.exp(request.getOperand1());
+            case "sin" -> Math.sin(Math.toRadians(request.operand1()));
+            case "cos" -> Math.cos(Math.toRadians(request.operand1()));
+            case "tan" -> Math.tan(Math.toRadians(request.operand1()));
+            case "exp" -> Math.exp(request.operand1());
             case "log" -> {
-                if (request.getOperand1() <= 0) {
+                if (request.operand1() <= 0) {
                     throw new IllegalArgumentException("Le logarithme n'est défini que pour des nombres strictement positifs");
                 }
-                yield Math.log(request.getOperand1());
+                yield Math.log(request.operand1());
             }
-            default -> throw new IllegalArgumentException("Type d'opération inconnu: " + request.getType());
+            default -> throw new IllegalArgumentException("Type d'opération inconnu: " + request.type());
         };
 
         return ResponseEntity.ok(result);
