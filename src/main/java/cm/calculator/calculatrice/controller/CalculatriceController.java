@@ -12,43 +12,29 @@ public class CalculatriceController {
     public ResponseEntity<Double> calculate(@RequestBody CalculatriceRequest request) {
         double result;
 
-        switch (request.getType()) {
-            case "addition":
-                result = request.getOperand1() + request.getOperand2();
-                break;
-            case "soustraction":
-                result = request.getOperand1() - request.getOperand2();
-                break;
-            case "multiplication":
-                result = request.getOperand1() * request.getOperand2();
-                break;
-            case "division":
+        // Utilisation du pattern matching pour le switch
+        result = switch (request.getType()) {
+            case "addition" -> request.getOperand1() + request.getOperand2();
+            case "soustraction" -> request.getOperand1() - request.getOperand2();
+            case "multiplication" -> request.getOperand1() * request.getOperand2();
+            case "division" -> {
                 if (request.getOperand2() == 0) {
                     throw new IllegalArgumentException("Division par zéro non autorisée");
                 }
-                result = request.getOperand1() / request.getOperand2();
-                break;
-            case "sin":
-                result = Math.sin(Math.toRadians(request.getOperand1()));
-                break;
-            case "cos":
-                result = Math.cos(Math.toRadians(request.getOperand1()));
-                break;
-            case "tan":
-                result = Math.tan(Math.toRadians(request.getOperand1()));
-                break;
-            case "exp":
-                result = Math.exp(request.getOperand1());
-                break;
-            case "log":
+                yield request.getOperand1() / request.getOperand2();
+            }
+            case "sin" -> Math.sin(Math.toRadians(request.getOperand1()));
+            case "cos" -> Math.cos(Math.toRadians(request.getOperand1()));
+            case "tan" -> Math.tan(Math.toRadians(request.getOperand1()));
+            case "exp" -> Math.exp(request.getOperand1());
+            case "log" -> {
                 if (request.getOperand1() <= 0) {
                     throw new IllegalArgumentException("Le logarithme n'est défini que pour des nombres strictement positifs");
                 }
-                result = Math.log(request.getOperand1());
-                break;
-            default:
-                throw new IllegalArgumentException("Type d'opération inconnu: " + request.getType());
-        }
+                yield Math.log(request.getOperand1());
+            }
+            default -> throw new IllegalArgumentException("Type d'opération inconnu: " + request.getType());
+        };
 
         return ResponseEntity.ok(result);
     }
