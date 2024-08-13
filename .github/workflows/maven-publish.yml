@@ -1,0 +1,42 @@
+# Ce workflow se déclenche lorsque vous créez une release et publie un package Maven vers GitHub Packages
+
+name: Maven Package
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write  # Nécessaire pour l'authentification à GitHub Packages
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+    - name: Publish to GitHub Packages
+      run: mvn deploy -s ${{ github.workspace }}/settings.xml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
