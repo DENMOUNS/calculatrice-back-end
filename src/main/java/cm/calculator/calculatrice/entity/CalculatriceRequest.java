@@ -1,6 +1,7 @@
 package cm.calculator.calculatrice.entity;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-public record CalculatriceRequest(String type, List<Double> operands) {
+public record CalculatriceRequest(OperationType type, List<BigDecimal> operands) {
 }
