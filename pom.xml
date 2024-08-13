@@ -87,4 +87,16 @@
             </plugin>
         </plugins>
     </build>
+	<distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/DENMOUNS/calculator</url>
+        </repository>
+    </distributionManagement>
+	<repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/DENMOUNS/calculatrice-back-end</url>
+        </repository>
+    </repositories>
 </project>
